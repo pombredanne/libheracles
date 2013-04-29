@@ -1,0 +1,62 @@
+HERACLES_0.1.0 {
+    global:
+      hera_init;
+      hera_close;
+      hera_get;
+      hera_set;
+      hera_insert;
+      hera_rm;
+      hera_mv;
+      hera_match;
+      hera_save;
+      hera_print;
+      # Symbols with __ are private
+      __hera_load_module_file;
+    local: *;
+};
+
+HERACLES_0.8.0 {
+    global:
+      hera_defvar;
+      hera_defnode;
+      hera_load;
+} HERACLES_0.1.0;
+
+HERACLES_0.10.0 {
+    global:
+      hera_error;
+      hera_error_message;
+      hera_error_minor_message;
+      hera_error_details;
+} HERACLES_0.8.0;
+
+HERACLES_0.11.0 {
+    global:
+      hera_setm;
+} HERACLES_0.10.0;
+
+HERACLES_0.12.0 {
+    global:
+      hera_span;
+} HERACLES_0.11.0;
+
+HERACLES_0.14.0 {
+    global:
+      hera_srun;
+      __hera_init_memstream;
+      __hera_close_memstream;
+} HERACLES_0.12.0;
+
+HERACLES_0.15.0 {
+    global:
+      hera_to_xml;
+} HERACLES_0.14.0;
+
+HERACLES_0.16.0 {
+    global:
+      hera_text_store;
+      hera_text_retrieve;
+      hera_rename;
+      hera_transform;
+      hera_label;
+} HERACLES_0.15.0;

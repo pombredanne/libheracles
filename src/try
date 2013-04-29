@@ -1,0 +1,43 @@
+#! /bin/bash
+
+topdir=$(cd $(dirname $0)/.. && pwd)
+export HERACLES_LENS_LIB=${topdir}/lenses
+export HERACLES_ROOT=${topdir}/build/try
+
+HERACMDS=${topdir}/build/heracmds.txt
+GDBCMDS=${topdir}/build/gdbcmds.txt
+
+rm -rf $HERACLES_ROOT
+cp -pr ${topdir}/tests/root $HERACLES_ROOT
+find $HERACLES_ROOT -name \*.heranew\* | xargs -r rm
+
+if [[ ! -f $HERACMDS ]] ; then
+    cat > $HERACMDS <<EOF
+match /heracles/version
+EOF
+fi
+
+if [[ ! -f $GDBCMDS ]] ; then
+    cat > $GDBCMDS <<EOF
+run --nostdinc -I $HERACLES_LENS_LIB -r $HERACLES_ROOT < $HERACMDS
+EOF
+fi
+
+cd $topdir/src
+if [[ "x$1" == "xgdb" ]] ; then
+    libtool --mode=execute gdb -x $GDBCMDS ./heratool
+elif [[ "x$1" == "xstrace" ]] ; then
+    libtool --mode=execute /usr/bin/strace ./heratool --nostdinc < $HERACMDS
+elif [[ "x$1" == "xvalgrind" ]] ; then
+    libtool --mode=execute valgrind --leak-check=full ./heratool --nostdinc < $HERACMDS
+elif [[ "x$1" == "xcli" ]] ; then
+    shift
+    ./heratool --nostdinc "$@"
+else
+    ./heratool --nostdinc "$@" < $HERACMDS
+    echo
+    for f in $(find $HERACLES_ROOT -name \*.heranew); do
+        echo "File $f"
+        diff -u ${f%.heranew} $f
+    done
+fi
