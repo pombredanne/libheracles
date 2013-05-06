@@ -152,6 +152,10 @@ static bool file_current(struct heracles *hera, const char *fname,
     return (file != NULL && ! file->dirty);
 }
 
+/* 
+ * Looks for the files in the lens ? 
+ * 
+ */
 static int filter_generate(struct tree *xfm, const char *root,
                            int *nmatches, char ***matches) {
     glob_t globbuf;

@@ -172,24 +172,6 @@ void api_exit(const struct heracles *hera) {
     }
 }
 
-static int init_root(struct heracles *hera, const char *root0) {
-    if (root0 == NULL)
-        root0 = getenv(HERACLES_ROOT_ENV);
-    if (root0 == NULL || root0[0] == '\0')
-        root0 = "/";
-
-    hera->root = strdup(root0);
-    if (hera->root == NULL)
-        return -1;
-
-    if (hera->root[strlen(hera->root)-1] != SEP) {
-        if (REALLOC_N(hera->root, strlen(hera->root) + 2) < 0)
-            return -1;
-        strcat((char *) hera->root, "/");
-    }
-    return 0;
-}
-
 static int init_loadpath(struct heracles *hera, const char *loadpath) {
     int r;
 
@@ -294,9 +276,6 @@ struct heracles *hera_init(const char *root, const char *loadpath,
 
     result->flags = flags;
 
-    r = init_root(result, root);
-    ERR_NOMEM(r < 0, result);
-
     result->origin->children->label = strdup(s_heracles);
 
     /* We are now initialized enough that we can dare return RESULT even
@@ -331,17 +310,6 @@ struct heracles *hera_init(const char *root, const char *loadpath,
     if (interpreter_init(result) == -1)
         goto error;
 
-    list_for_each(modl, result->modules) {
-        struct transform *xform = modl->autoload;
-        if (xform == NULL)
-            continue;
-        tree_from_transform(result, modl->name, xform);
-        ERR_BAIL(result);
-    }
-    if (!(result->flags & HERA_NO_LOAD))
-        if (hera_load(result) < 0)
-            goto error;
-
     api_exit(result);
     return result;
 
@@ -365,71 +333,6 @@ static void tree_mark_files(struct tree *tree) {
     }
 }
 
-int hera_load(struct heracles *hera) {
-    const char *option = NULL;
-    struct tree *meta = tree_child_cr(hera->origin, s_heracles);
-    struct tree *meta_files = tree_child_cr(meta, s_files);
-    struct tree *files = tree_child_cr(hera->origin, s_files);
-    struct tree *load = tree_child_cr(meta, s_load);
-    struct tree *vars = tree_child_cr(meta, s_vars);
-
-    api_entry(hera);
-
-    ERR_NOMEM(load == NULL, hera);
-
-    /* To avoid unnecessary loads of files, we reload an existing file in
-     * several steps:
-     * (1) mark all file nodes under /heracles/files as dirty (and only those)
-     * (2) process all files matched by a lens; we check (in
-     *     transform_load) if the file has been modified. If it has, we
-     *     reparse it. Either way, we clear the dirty flag. We also need to
-     *     reread the file if part or all of it has been modified in the
-     *     tree but not been saved yet
-     * (3) remove all files from the tree that still have a dirty entry
-     *     under /heracles/files. Those files are not processed by any lens
-     *     anymore
-     * (4) Remove entries from /heracles/files and /files that correspond
-     *     to directories without any files of interest
-     */
-
-    /* update flags according to option value */
-    if (hera_get(hera, HERACLES_SPAN_OPTION, &option) == 1) {
-        if (strcmp(option, HERA_ENABLE) == 0) {
-            hera->flags |= HERA_ENABLE_SPAN;
-        } else {
-            hera->flags &= ~HERA_ENABLE_SPAN;
-        }
-    }
-
-    tree_clean(meta_files);
-    tree_mark_files(meta_files);
-
-    list_for_each(xfm, load->children) {
-        if (transform_validate(hera, xfm) == 0)
-            transform_load(hera, xfm);
-    }
-
-    /* This makes it possible to spot 'directories' that are now empty
-     * because we removed their file contents */
-    tree_clean(files);
-
-    tree_rm_dirty_files(hera, meta_files);
-    tree_rm_dirty_leaves(hera, meta_files, meta_files);
-    tree_rm_dirty_leaves(hera, files, files);
-
-    tree_clean(hera->origin);
-
-    list_for_each(v, vars->children) {
-        hera_defvar(hera, v->label, v->value);
-        ERR_BAIL(hera);
-    }
-
-    api_exit(hera);
-    return 0;
- error:
-    api_exit(hera);
-    return -1;
-}
 int hera_get(const struct heracles *hera, const char *path, const char **value) {
     struct pathx *p = NULL;
     struct tree *match;
@@ -960,47 +863,6 @@ static int unlink_removed_files(struct heracles *hera,
         tm = next;
     }
     return result;
-}
-
-int hera_save(struct heracles *hera) {
-    int ret = 0;
-    struct tree *meta = tree_child_cr(hera->origin, s_heracles);
-    struct tree *meta_files = tree_child_cr(meta, s_files);
-    struct tree *files = tree_child_cr(hera->origin, s_files);
-    struct tree *load = tree_child_cr(meta, s_load);
-
-    api_entry(hera);
-
-    if (update_save_flags(hera) < 0)
-        goto error;
-
-    if (files == NULL || meta == NULL || load == NULL)
-        goto error;
-
-    hera_rm(hera, HERACLES_EVENTS_SAVED);
-
-    list_for_each(xfm, load->children)
-        transform_validate(hera, xfm);
-
-    if (files->dirty) {
-        if (tree_save(hera, files->children, HERACLES_FILES_TREE) == -1)
-            ret = -1;
-
-        /* Remove files whose entire subtree was removed. */
-        if (meta_files != NULL) {
-            if (unlink_removed_files(hera, files, meta_files) < 0)
-                ret = -1;
-        }
-    }
-    if (!(hera->flags & HERA_SAVE_NOOP)) {
-        tree_clean(hera->origin);
-    }
-
-    api_exit(hera);
-    return ret;
- error:
-    api_exit(hera);
-    return -1;
 }
 
 int hera_transform(struct heracles *hera, const char *lens,

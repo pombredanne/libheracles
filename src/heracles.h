@@ -300,37 +300,6 @@ int hera_match(const heracles *hera, const char *path, char ***matches);
  */
 int hera_save(heracles *hera);
 
-/* Function: hera_load
- *
- * Load files into the tree. Which files to load and what lenses to use on
- * them is specified under /heracles/load in the tree; each entry
- * /heracles/load/NAME specifies a 'transform', by having itself exactly one
- * child 'lens' and any number of children labelled 'incl' and 'excl'. The
- * value of NAME has no meaning.
- *
- * The 'lens' grandchild of /heracles/load specifies which lens to use, and
- * can either be the fully qualified name of a lens 'Module.lens' or
- * '@Module'. The latter form means that the lens from the transform marked
- * for autoloading in MODULE should be used.
- *
- * The 'incl' and 'excl' grandchildren of /heracles/load indicate which files
- * to transform. Their value are used as glob patterns. Any file that
- * matches at least one 'incl' pattern and no 'excl' pattern is
- * transformed. The order of 'incl' and 'excl' entries is irrelevant.
- *
- * When HERA_INIT is first called, it populates /heracles/load with the
- * transforms marked for autoloading in all the modules it finds.
- *
- * Before loading any files, HERA_LOAD will remove everything underneath
- * /heracles/files and /files, regardless of whether any entries have been
- * modified or not.
- *
- * Returns -1 on error, 0 on success. Note that success includes the case
- * where some files could not be loaded. Details of such files can be found
- * as '/heracles//error'.
- */
-int hera_load(heracles *hera);
-
 /* Function: hera_text_store
  *
  * Use the value of node NODE as a string and transform it into a tree
