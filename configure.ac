@@ -41,5 +41,4 @@ AC_CHECK_FUNCS([strerror_r fsync])
 AC_OUTPUT(Makefile \
           gnulib/lib/Makefile \
           gnulib/tests/Makefile \
-          src/Makefile \
-          examples/Makefile )
+          src/Makefile)
