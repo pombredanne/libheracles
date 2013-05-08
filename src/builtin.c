@@ -30,6 +30,7 @@
 #include "memory.h"
 #include "transform.h"
 #include "errcode.h"
+#include "tree.h"
 
 #define UNIMPL_BODY(name)                       \
     {                                           \
@@ -132,7 +133,8 @@ static void exn_print_tree(struct value *exn, struct tree *tree) {
     struct memstream ms;
 
     init_memstream(&ms);
-    dump_tree(ms.stream, tree);
+    // Add dump tree from augeas
+    //dump_tree(ms.stream, tree);
     close_memstream(&ms);
     exn_printf_line(exn, "%s", ms.buf);
     FREE(ms.buf);
