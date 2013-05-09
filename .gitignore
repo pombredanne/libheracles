@@ -54,3 +54,4 @@ doc/naturaldocs/conf/*/Data/*.nd
 examples/fadot
 .settings
 *.swp
+*.pyc

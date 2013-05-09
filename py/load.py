@@ -4,6 +4,7 @@ import string
 import glob
 import ctypes
 import ctypes.util
+from structs import struct_heracles
 
 
 def _findLib(name):
@@ -43,13 +44,27 @@ class Heracles(object):
         if not isinstance(flags, int):
             raise TypeError("flag MUST be a flag!")
 
-        self.__handle = libheracles.hera_init(loadpath, flags)
-        if not self.__handle:
+        hera_init = libheracles.hera_init
+        hera_init.restype = ctypes.POINTER(struct_heracles)
+
+        self._handle = hera_init(loadpath, flags)
+        if not self._handle:
             raise RuntimeError("Unable to create Heracles object!")
+
+    def modules(self):
+        print self._handle.nmodpath
+
 
 class Transform(object):
     def __init__(self, heracles, name):
         self.heracles = heracles
         self.name = name
 
-Heracles()
+class Tree(object):
+    def __init__(self, heracles, tree):
+        self.heracles = heracles
+        self.tree = tree
+
+h = Heracles()
+print h._handle.contents.nmodpath
+
