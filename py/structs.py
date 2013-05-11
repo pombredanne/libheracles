@@ -23,6 +23,15 @@ class struct_tree(c.Structure):
 class struct_module(c.Structure):
     pass
 
+class struct_lens(c.Structure):
+    pass
+
+class struct_filter(c.Structure):
+    pass
+
+class struct_lns_error(c.Structure):
+    pass
+
 # Not defined fields
 
 class struct_pathx_symtab(c.Structure):
@@ -78,4 +87,13 @@ struct_module._fields_ = [('ref', c.c_uint),
                 ('autoload', c.POINTER(struct_transform)),
                 ('name', c.c_char_p),
                 ('bindings', c.POINTER(struct_binding))]
+
+struct_transform._fields_ = [('ref', c.c_uint),
+                ('lens', c.POINTER(struct_lens)),
+                ('filter', c.POINTER(struct_filter))]
+
+struct_lns_error._fields_ = [('lens', c.POINTER(struct_lens)),
+                ('pos', c.c_int),
+                ('path', c.c_char_p),
+                ('message', c.c_char_p)]
 

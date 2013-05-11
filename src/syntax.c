@@ -39,7 +39,7 @@
 #include "errcode.h"
 
 /* Extension of source files */
-#define HERA_EXT ".hera"
+#define HERA_EXT ".aug"
 
 #define LNS_TYPE_CHECK(ctx) ((ctx)->hera->flags & HERA_TYPE_CHECK)
 
@@ -2028,7 +2028,7 @@ int interpreter_init(struct heracles *hera) {
 
     while ((dir = argz_next(hera->modpathz, hera->nmodpath, dir)) != NULL) {
         char *globpat;
-        r = asprintf(&globpat, "%s/*.hera", dir);
+        r = asprintf(&globpat, "%s/*.aug", dir);
         ERR_NOMEM(r < 0, hera);
 
         r = glob(globpat, gl_flags, NULL, &globbuf);

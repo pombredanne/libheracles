@@ -1,43 +1,35 @@
 import os
-from sys import version_info as _pyver
-import string
-import glob
-import ctypes
-import ctypes.util
+import ctypes as c
 from structs import struct_heracles
+from hexceptions import get_exception
+from libs import libheracles, libpython
 
 
-def _findLib(name):
-    ld_path = os.getenv("LD_LIBRARY_PATH")
-    for p in string.split(ld_path, ":"):
-        if (p[:-1] != "/"):
-            p += "/"
-        path = "%slib%s*.so" % (p,name)
-        files = glob.glob(path)
-        files.sort()
-        if (len(files) > 0):
-            return os.path.basename(files[0])
-    return None
+class Lenses(object):
+    def __get__(self, obj, obj_type=None):
+        self.heracles = obj
+        self._handle = obj._handle
+        return self
 
-def _dlopen(*args):
-    """Search for one of the libraries given as arguments and load it.
-    Returns the library.
-    """
-    libs = [l for l in [ ctypes.util.find_library(a) for a in args ] if l]
-    if (len(libs) == 0):
-        libs = libs = [l for l in [ _findLib(a) for a in args ] if l]
-    lib  = reduce(lambda x, y: x or ctypes.cdll.LoadLibrary(y), libs, None)
-    if not lib:
-        raise ImportError("Unable to import lib%s!" % args[0])
-    return lib
+    def __iter__(self):
+        module = self._handle.contents.module
+        while True:
+            if not module:
+                break
+            lens = Lens(self.heracles, module)
+            if lens.lens:
+                yield lens
+            module = module.contents.next
 
-libpython = _dlopen(*["python" + _v % _pyver[:2]
-                       for _v in ("%d.%d", "%d%d")])
-libpython.PyFile_AsFile.restype = ctypes.c_void_p
-libheracles = _dlopen("heracles")
-libheracles.hera_init.restype = ctypes.c_void_p
+    def __getitem__(self, name):
+        for module in self:
+            if module.name == name:
+                return module
+        raise KeyError("Unable to find module %s" % name)
 
 class Heracles(object):
+    lenses = Lenses()
+
     def __init__(self, loadpath=None, flags=0):
         if not isinstance(loadpath, basestring) and loadpath != None:
             raise TypeError("loadpath MUST be a string or None!")
@@ -45,26 +37,52 @@ class Heracles(object):
             raise TypeError("flag MUST be a flag!")
 
         hera_init = libheracles.hera_init
-        hera_init.restype = ctypes.POINTER(struct_heracles)
+        hera_init.restype = c.POINTER(struct_heracles)
 
         self._handle = hera_init(loadpath, flags)
         if not self._handle:
             raise RuntimeError("Unable to create Heracles object!")
 
-    def modules(self):
-        print self._handle.nmodpath
+        self.error = self._handle.contents.error.contents
 
+    def catch_exception(self):
+        exception = get_exception(self)
+        if exception is not None:
+            raise Exception
 
-class Transform(object):
-    def __init__(self, heracles, name):
+    def __repr__(self):
+        return "<Heracles object>"
+
+    def __del__(self):
+        hera_close = libheracles.hera_close
+        hera_close(self._handle)
+
+class Lens(object):
+    def __init__(self, heracles, module):
         self.heracles = heracles
-        self.name = name
+        self.module = module.contents
+        self.name = self.module.name
+        transform = self.module.autoload
+        self.lens = transform.contents.lens.contents if transform else None
+
+    def get(self, text):
+        return None
+
+    def put(self, tree, text):
+        return None
+    
+    def __repr__(self):
+        return "<Heracles.Lens '%s'>" % self.name
 
 class Tree(object):
     def __init__(self, heracles, tree):
         self.heracles = heracles
         self.tree = tree
 
-h = Heracles()
+modules = os.path.abspath("../lenses/")
+print modules
+h = Heracles(modules)
 print h._handle.contents.nmodpath
+print h.lenses["AptConf"]
+del(h)
 

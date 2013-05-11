@@ -101,6 +101,11 @@ const char *hera_error_minor_message(heracles *hera);
  */
 const char *hera_error_details(heracles *hera);
 
+/******************************************************************
+ *                    Heracles Added stuff here                   *
+ ******************************************************************/
+
+void reset_error(struct error *err);
 
 #ifdef __cplusplus
 }

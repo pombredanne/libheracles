@@ -190,6 +190,7 @@ static int init_loadpath(struct heracles *hera, const char *loadpath) {
         if (r != 0)
             return -1;
     }
+    /*
     if (!(hera->flags & HERA_NO_STDINC)) {
         r = argz_add(&hera->modpathz, &hera->nmodpath, HERACLES_LENS_DIR);
         if (r != 0)
@@ -199,6 +200,7 @@ static int init_loadpath(struct heracles *hera, const char *loadpath) {
         if (r != 0)
             return -1;
     }
+    */
     /* Clean up trailing slashes */
     if (hera->nmodpath > 0) {
         argz_stringify(hera->modpathz, hera->nmodpath, PATH_SEP_CHAR);
@@ -308,6 +310,14 @@ struct heracles *hera_init(const char *loadpath, unsigned int flags) {
 
     if (interpreter_init(result) == -1)
         goto error;
+
+    struct tree * meta = tree_child_cr(result->origin, s_heracles);
+    struct tree * load = tree_child_cr(meta, s_load);
+
+    list_for_each(xfm, load->children) {
+        if (transform_validate(result, xfm) == 0)
+            transform_load(result, xfm);
+    }
 
     api_exit(result);
     return result;
@@ -475,6 +485,27 @@ const char *hera_error_minor_message(struct heracles *hera) {
 const char *hera_error_details(struct heracles *hera) {
     return hera->error->details;
 }
+
+/***********************************************************************
+ *                       Heracles added stuff                          *
+ ***********************************************************************/
+
+struct tree * _hera_get(struct heracles * hera, struct module * module, char * text) {
+    struct tree *tree = NULL;
+    struct info *info;
+    make_ref(info);
+    make_ref(info->filename);
+    //info->filename->str = strdup(filename);
+    info->error = hera->error;
+    info->flags = hera->flags;
+    info->first_line = 1;
+
+    tree = lns_get(info, lens, text, &err);
+
+    return tree;
+}
+
+
 
 /*
  * Local variables:
