@@ -26,7 +26,6 @@
 #define HERACLES_H_
 
 typedef struct heracles heracles;
-
 /* Enum: hera_flags
  *
  * Flags to influence the behavior of Augeas. Pass a bitmask of these flags
@@ -105,8 +104,15 @@ const char *hera_error_details(heracles *hera);
  *                    Heracles Added stuff here                   *
  ******************************************************************/
 
+struct error;
+struct lns_error;
+struct lens;
+struct tree;
+
 void reset_error(struct error *err);
 
+struct tree * _hera_get(struct lens *lens, char *text, struct lns_error *err); 
+char * _hera_put(struct lens *lens, struct tree *tree, char *text, struct lns_error *err);
 #ifdef __cplusplus
 }
 #endif

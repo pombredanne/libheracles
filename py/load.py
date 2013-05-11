@@ -1,6 +1,6 @@
 import os
 import ctypes as c
-from structs import struct_heracles
+from structs import struct_heracles, struct_tree, struct_lns_error
 from hexceptions import get_exception
 from libs import libheracles, libpython
 
@@ -63,13 +63,27 @@ class Lens(object):
         self.module = module.contents
         self.name = self.module.name
         transform = self.module.autoload
-        self.lens = transform.contents.lens.contents if transform else None
+        self.lens = transform.contents.lens if transform else None
+
+    def _catch_error(self, err):
+        if err:
+            raise Exception(err.contents.message)
 
     def get(self, text):
-        return None
+        hera_get = libheracles._hera_get
+        hera_get.restype = c.POINTER(struct_tree)
+        error = c.POINTER(struct_lns_error)()
+        tree = hera_get(self.lens, c.c_char_p(text), error)
+        self._catch_error(error)
+        return tree
 
     def put(self, tree, text):
-        return None
+        hera_put = libheracles._hera_put
+        hera_put.restype = c.c_char_p
+        error = c.POINTER(struct_lns_error)()
+        result = hera_put(self.lens, tree, c.c_char_p(text), error)
+        self._catch_error(error)
+        return result
     
     def __repr__(self):
         return "<Heracles.Lens '%s'>" % self.name
@@ -83,6 +97,14 @@ modules = os.path.abspath("../lenses/")
 print modules
 h = Heracles(modules)
 print h._handle.contents.nmodpath
-print h.lenses["AptConf"]
+
+lens = h.lenses["Aptsources"]
+
+text = file('/etc/apt/sources.list').read()
+print text
+tree = lens.get(text)
+import pdb; pdb.set_trace()
+text = lens.put(tree, text)
+print text
 del(h)
 

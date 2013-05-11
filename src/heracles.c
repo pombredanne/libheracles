@@ -489,23 +489,45 @@ const char *hera_error_details(struct heracles *hera) {
 /***********************************************************************
  *                       Heracles added stuff                          *
  ***********************************************************************/
+static char *append_newline(char *text, size_t len) {
+    /* Try to append a newline; this is a big hack to work */
+    /* around the fact that lenses generally break if the  */
+    /* file does not end with a newline. */
+    if (len == 0 || text[len-1] != '\n') {
+        if (REALLOC_N(text, len+2) == 0) {
+            text[len] = '\n';
+            text[len+1] = '\0';
+        }
+    }
+    return text;
+}
 
-struct tree * _hera_get(struct heracles * hera, struct module * module, char * text) {
+struct tree * _hera_get(struct lens *lens, char *text, struct lns_error *err) {
     struct tree *tree = NULL;
     struct info *info;
     make_ref(info);
-    make_ref(info->filename);
-    //info->filename->str = strdup(filename);
-    info->error = hera->error;
-    info->flags = hera->flags;
+    info->flags = 0;
     info->first_line = 1;
 
+    int text_len = strlen(text);
+    text = append_newline(text, text_len);
+
     tree = lns_get(info, lens, text, &err);
+
+    unref(info, info);
 
     return tree;
 }
 
+char * _hera_put(struct lens *lens, struct tree *tree, char *text, struct lns_error *err)
+{
+    struct memstream ms;
 
+    init_memstream(&ms);
+    lns_put(ms.stream, lens, tree, text, &err);
+    close_memstream(&ms);
+    return ms.buf;
+}
 
 /*
  * Local variables:
