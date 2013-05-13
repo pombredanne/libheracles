@@ -97,3 +97,8 @@ struct_lns_error._fields_ = [('lens', c.POINTER(struct_lens)),
                 ('path', c.c_char_p),
                 ('message', c.c_char_p)]
 
+struct_filter._fields_ = [('ref', c.c_uint),
+                ('next', c.POINTER(struct_filter)),
+                ('glob', c.POINTER(struct_string)),
+                ('include', c.c_uint)]
+

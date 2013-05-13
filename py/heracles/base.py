@@ -1,4 +1,5 @@
 import ctypes as c
+from fnmatch import fnmatch
 from heracles.structs import struct_heracles, struct_tree, struct_lns_error
 from heracles.exceptions import get_exception
 from heracles.libs import libheracles
@@ -54,6 +55,12 @@ class Heracles(object):
         tree.parent = tree
         return tree
 
+    def get_lens_by_path(self, path):
+        for lens in self.lenses:
+            if lens.check_path(path):
+                return lens
+
+
     def __repr__(self):
         return "<Heracles object>"
 
@@ -68,6 +75,7 @@ class Lens(object):
         self.name = self.module.name
         transform = self.module.autoload
         self.lens = transform.contents.lens if transform else None
+        self.filter = transform.contents.filter if transform else None
 
     def _catch_error(self, err):
         if err:
@@ -89,7 +97,33 @@ class Lens(object):
         result = hera_put(self.lens, tree, c.c_char_p(text), error)
         self._catch_error(error)
         return result
-    
+
+    def iter_filters(self):
+        filter = self.filter
+        while True:
+            if filter is None:
+                break
+            yield filter
+            filter = filter.next
+
+    def check_path(self, path):
+        positive = False
+        negative = False
+        for filter in self.iter_filters():
+            res = check_filter(filter, path)
+            if res == True:
+                positive = True
+            if res == False:
+                negative = True
+        if negative or not positive:
+            return False
+        return True
+
     def __repr__(self):
         return "<Heracles.Lens '%s'>" % self.name
+
+def check_filter(filter, path):
+    match = fnmatch(path, filter.glob.value)
+    if match:
+        return True if filter.include.value == 1 else False
 

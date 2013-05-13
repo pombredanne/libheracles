@@ -113,6 +113,9 @@ void reset_error(struct error *err);
 
 struct tree * _hera_get(struct lens *lens, char *text, struct lns_error *err); 
 char * _hera_put(struct lens *lens, struct tree *tree, char *text, struct lns_error *err);
+
+void free_tree_node(struct tree * tree);
+
 #ifdef __cplusplus
 }
 #endif
