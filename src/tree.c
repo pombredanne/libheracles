@@ -357,6 +357,7 @@ struct tree *make_tree(char *label, char *value, struct tree *parent,
     tree->value = value;
     tree->parent = parent;
     tree->children = children;
+    tree->span = NULL;
     list_for_each(c, tree->children)
         c->parent = tree;
     if (parent != NULL)

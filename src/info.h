@@ -43,6 +43,7 @@ struct string *dup_string(const char *str);
 void free_string(struct string *string);
 
 /* File information */
+// TODO Remove filename
 struct info {
     /* There is only one struct error for each Augeas instance */
     struct error  *error;
@@ -56,6 +57,7 @@ struct info {
 };
 
 struct span {
+//TODO Remove filename
     struct string *filename;
     uint label_start;
     uint label_end;

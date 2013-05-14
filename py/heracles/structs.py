@@ -20,6 +20,8 @@ class struct_span(c.Structure):
 class struct_tree(c.Structure):
     pass
 
+struct_tree_p = c.POINTER(struct_tree)
+
 class struct_module(c.Structure):
     pass
 
@@ -63,7 +65,7 @@ struct_error._fields_ = [('code', c.c_int),
                 ('info', c.POINTER(struct_info)),
                 ('hera', c.POINTER(struct_heracles))]
 
-struct_heracles._fields_ = [('origin', c.POINTER(struct_tree)),
+struct_heracles._fields_ = [('origin', struct_tree_p),
                 ('root', c.c_char_p),
                 ('flags', c.c_uint),
                 ('module', c.POINTER(struct_module)),
@@ -74,10 +76,10 @@ struct_heracles._fields_ = [('origin', c.POINTER(struct_tree)),
                 ('api_entries', c.c_uint),
                 ]
 
-struct_tree._fields_ = [('next', c.POINTER(struct_tree)),
-                ('parent', c.POINTER(struct_tree)),
+struct_tree._fields_ = [('next', struct_tree_p),
+                ('parent', struct_tree_p),
                 ('label', c.c_char_p),
-                ('children', c.POINTER(struct_tree)),
+                ('children', struct_tree_p),
                 ('value', c.c_char_p),
                 ('dirty', c.c_int),
                 ('span', c.POINTER(struct_span))]

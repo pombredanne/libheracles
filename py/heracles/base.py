@@ -51,8 +51,7 @@ class Heracles(object):
             raise Exception
 
     def new_tree(self):
-        tree = Tree(self)
-        tree.parent = tree
+        tree = Tree(heracles=self)
         return tree
 
     def get_lens_by_path(self, path):
@@ -85,12 +84,12 @@ class Lens(object):
         hera_get = libheracles._hera_get
         hera_get.restype = c.POINTER(struct_tree)
         error = c.POINTER(struct_lns_error)()
-        tree = hera_get(self.lens, c.c_char_p(text), error)
+        tree_p = hera_get(self.lens, c.c_char_p(text), error)
         self._catch_error(error)
-        return Tree(self.heracles, htree=tree)
+        return Tree(heracles=self.heracles, first=tree_p)
 
     def put(self, tree, text):
-        tree = tree.pointer
+        tree = tree[0].pointer
         hera_put = libheracles._hera_put
         hera_put.restype = c.c_char_p
         error = c.POINTER(struct_lns_error)()

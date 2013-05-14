@@ -508,6 +508,7 @@ struct tree * _hera_get(struct lens *lens, char *text, struct lns_error *err) {
     make_ref(info);
     info->flags = 0;
     info->first_line = 1;
+    info->filename = NULL;
 
     int text_len = strlen(text);
     text = append_newline(text, text_len);

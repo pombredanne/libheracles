@@ -121,22 +121,19 @@ struct span *make_span(struct info *info) {
     }
     /* UINT_MAX means span is not initialized yet */
     span->span_start = UINT_MAX;
-    span->filename = ref(info->filename);
     return span;
 }
 
 void free_span(struct span *span) {
     if (span == NULL)
         return;
-    unref(span->filename, string);
     free(span);
 }
 
 void print_span(struct span *span) {
     if (span == NULL)
         return;
-    printf("%s label=(%i:%i) value=(%i:%i) span=(%i,%i)\n",
-            span->filename->str,
+    printf("label=(%i:%i) value=(%i:%i) span=(%i,%i)\n",
             span->label_start, span->label_end,
             span->value_start, span->value_end,
             span->span_start, span->span_end);
