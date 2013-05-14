@@ -1,7 +1,7 @@
 import os
 import ctypes as c
 from unittest import TestCase
-from heracles import Heracles, Tree, TreeNode
+from heracles import Heracles, TreeNode
 
 def check_equal_addresses(p1, p2):
     return c.addressof(p1) == c.addressof(p2)
