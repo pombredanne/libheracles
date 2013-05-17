@@ -41,6 +41,24 @@ class HeraclesTest(TestCase):
         ntree = self.lens.get(text)
         check_equal_tree(self, self.tree, ntree)
 
+class FilterTest(TestCase):
+    def setUp(self):
+        self.h = Heracles(LENSES_PATH)
+        self.text = file('./test/data/sources.list').read()
+        self.lens = self.h.lenses['Aptsources']
+
+    def test_filter(self):
+        self.assertTrue(self.lens.check_path("/etc/apt/sources.list"))
+        self.assertFalse(self.lens.check_path("/etc/sources.list"))
+
+    def test_get_lens(self):
+        l = self.h.get_lens_by_path("/etc/apt/sources.list")
+        self.assertEqual(l.name, "Aptsources")
+        l = self.h.get_lens_by_path("/etc/sudoers")
+        self.assertEqual(l.name, "Sudoers")
+        l = self.h.get_lens_by_path("/etc/xudoers")
+        self.assertTrue(l is None)
+
 class TreeBuildTest(TestCase):
     def setUp(self):
         self.h = Heracles()

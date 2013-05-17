@@ -99,16 +99,16 @@ class Lens(object):
     def iter_filters(self):
         filter = self.filter
         while True:
-            if filter is None:
+            if not filter:
                 break
             yield filter
-            filter = filter.next
+            filter = filter.contents.next
 
     def check_path(self, path):
         positive = False
         negative = False
         for filter in self.iter_filters():
-            res = check_filter(filter, path)
+            res = check_filter(filter.contents, path)
             if res == True:
                 positive = True
             if res == False:
@@ -121,7 +121,7 @@ class Lens(object):
         return "<Heracles.Lens '%s'>" % self.name
 
 def check_filter(filter, path):
-    match = fnmatch(path, filter.glob.value)
+    match = fnmatch(path, filter.glob.contents.str)
     if match:
-        return True if filter.include.value == 1 else False
+        return True if filter.include == 1 else False
 

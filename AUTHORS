@@ -1,5 +1,7 @@
 -*- coding: utf-8 -*-
 
+AUGEAS original source code:
+
 Written by:
 
   David Lutterkort <lutter@redhat.com>
@@ -86,3 +88,9 @@ Contributions by:
   Athir Nuaimi                <athir@nuaimi.com>
   Ian Berry                   <iberry@barracuda.com>
   Gabriel de Perthuis	      <g2p.code+heracles@gmail.com>
+
+HERACLES fork:
+
+Written by:
+
+  Jorge Monforte             <jorge.monforte@gmail.com>
