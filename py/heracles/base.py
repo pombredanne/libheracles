@@ -59,7 +59,6 @@ class Heracles(object):
             if lens.check_path(path):
                 return lens
 
-
     def __repr__(self):
         return "<Heracles object>"
 
@@ -86,7 +85,7 @@ class Lens(object):
         error = c.POINTER(struct_lns_error)()
         tree_p = hera_get(self.lens, c.c_char_p(text), error)
         self._catch_error(error)
-        return Tree(heracles=self.heracles, first=tree_p)
+        return Tree.build_from_raw_tree(heracles=self.heracles, first=tree_p)
 
     def put(self, tree, text):
         tree = tree[0].pointer

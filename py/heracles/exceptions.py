@@ -1,43 +1,43 @@
-class HeraclesException(Exception):
+class HeraclesError(Exception):
     pass
 
-class HeraclesNoMemError(HeraclesException):
+class HeraclesNoMemError(HeraclesError):
     pass
 
-class HeraclesInternalError(HeraclesException):
+class HeraclesInternalError(HeraclesError):
     pass
 
-class HeraclesPathXError(HeraclesException):
+class HeraclesPathXError(HeraclesError):
     pass
 
-class HeraclesNoMatchError(HeraclesException):
+class HeraclesNoMatchError(HeraclesError):
     pass
 
-class HeraclesMMatchError(HeraclesException):
+class HeraclesMMatchError(HeraclesError):
     pass
 
-class HeraclesSyntaxError(HeraclesException):
+class HeraclesSyntaxError(HeraclesError):
     pass
 
-class HeraclesNoLensError(HeraclesException):
+class HeraclesNoLensError(HeraclesError):
     pass
 
-class HeraclesMXFMError(HeraclesException):
+class HeraclesMXFMError(HeraclesError):
     pass
 
-class HeraclesNoSpanError(HeraclesException):
+class HeraclesNoSpanError(HeraclesError):
     pass
 
-class HeraclesMvDescError(HeraclesException):
+class HeraclesMvDescError(HeraclesError):
     pass
 
-class HeraclesCmdRunError(HeraclesException):
+class HeraclesCmdRunError(HeraclesError):
     pass
 
-class HeraclesBadArgError(HeraclesException):
+class HeraclesBadArgError(HeraclesError):
     pass
 
-class HeraclesLabelError(HeraclesException):
+class HeraclesLabelError(HeraclesError):
     pass
 
 exception_list = (None, HeraclesNoMemError, HeraclesNoMemError, 
@@ -54,3 +54,12 @@ def get_exception(heracles):
         details = str(error.details)
         
         return exception(details)
+
+# Tree exceptions
+
+class HeraclesTreeError(HeraclesError):
+    pass
+
+class HeraclesTreeLabelError(HeraclesTreeError):
+    pass
+
