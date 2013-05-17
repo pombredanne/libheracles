@@ -26,6 +26,11 @@
 #define HERACLES_H_
 
 typedef struct heracles heracles;
+struct lens;
+struct lns_error;
+struct error;
+struct tree;
+
 /* Enum: hera_flags
  *
  * Flags to influence the behavior of Augeas. Pass a bitmask of these flags
@@ -57,11 +62,42 @@ enum hera_flags {
 extern "C" {
 #endif
 
+/*
+ *  hera_init : Initializes heracles struct
+ */
+
 heracles *hera_init(const char *loadpath, unsigned int flags);
+
+/*
+ *  hera_close : Frees heracles struct and else
+ */
+
 void hera_close(heracles *hera);
-int hera_set(struct heracles *hera, const char *path, const char *value); 
-int hera_get(const struct heracles *hera, const char *path, const char **value);
-int hera_rm(struct heracles *hera, const char *path);
+
+/*
+ *  hera_get : Parses text with lens
+ */
+
+struct tree * hera_get(struct lens *lens, char *text, struct lns_error *err);
+
+/*
+ *  hera_put : Dumps parsed tree to text
+ */
+
+char * hera_put(struct lens *lens, struct tree *tree, char *text, struct lns_error *err);
+
+/*
+ *  reset_error : Resets heracles error after exception
+ */
+
+void reset_error(struct error *err);
+
+/*
+ *  free_tree_node : Frees tree node structure 
+ */
+
+void free_tree_node(struct tree * tree);
+
 /*
  * Error reporting
  */
@@ -82,39 +118,6 @@ typedef enum {
     HERA_EBADARG,        /* Invalid argument in funcion call */
     HERA_ELABEL          /* Invalid label */
 } hera_errcode_t;
-
-/* Return the error code from the last API call */
-int hera_error(heracles *hera);
-
-/* Return a human-readable message for the error code */
-const char *hera_error_message(heracles *hera);
-
-/* Return a human-readable message elaborating the error code; might be
- * NULL. For example, when the error code is HERA_EPATHX, this will explain
- * how the path expression is invalid */
-const char *hera_error_minor_message(heracles *hera);
-
-/* Return details about the error, which might be NULL. For example, for
- * HERA_EPATHX, indicates where in the path expression the error
- * occurred. The returned value can only be used until the next API call
- */
-const char *hera_error_details(heracles *hera);
-
-/******************************************************************
- *                    Heracles Added stuff here                   *
- ******************************************************************/
-
-struct error;
-struct lns_error;
-struct lens;
-struct tree;
-
-void reset_error(struct error *err);
-
-struct tree * _hera_get(struct lens *lens, char *text, struct lns_error *err); 
-char * _hera_put(struct lens *lens, struct tree *tree, char *text, struct lns_error *err);
-
-void free_tree_node(struct tree * tree);
 
 #ifdef __cplusplus
 }

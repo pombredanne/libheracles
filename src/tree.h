@@ -2,7 +2,6 @@
 #include "internal.h"
 #include "memory.h"
 #include "syntax.h"
-#include "transform.h"
 #include "errcode.h"
 
 #include <fnmatch.h>
@@ -66,8 +65,6 @@ int tree_unlink(struct tree *tree) ;
 int tree_rm(struct pathx *p) ;
 
 int tree_replace(struct heracles *hera, const char *path, struct tree *sub) ;
-
-int tree_save(struct heracles *hera, struct tree *tree, const char *path) ;
 
 int tree_equal(const struct tree *t1, const struct tree *t2) ;
 

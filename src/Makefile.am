@@ -16,7 +16,7 @@ noinst_LTLIBRARIES = liblexer.la
 
 include_HEADERS = heracles.h 
 
-libheracles_la_SOURCES = heracles.h heracles.c pathx.c \
+libheracles_la_SOURCES = heracles.h heracles.c pathx.c\
 	internal.h internal.c \
 	memory.h memory.c ref.h ref.c \
     syntax.c syntax.h parser.y builtin.c lens.c lens.h regexp.c regexp.h \

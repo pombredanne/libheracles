@@ -272,41 +272,6 @@ void tree_unlink_children(struct heracles *hera, struct tree *tree) {
         tree_unlink(tree->children);
 }
 
-void tree_rm_dirty_files(struct heracles *hera, struct tree *tree) {
-    struct tree *p;
-
-    if (!tree->dirty)
-        return;
-
-    if ((p = tree_child(tree, "path")) != NULL) {
-        hera_rm(hera, p->value);
-        tree_unlink(tree);
-    } else {
-        struct tree *c = tree->children;
-        while (c != NULL) {
-            struct tree *next = c->next;
-            tree_rm_dirty_files(hera, c);
-            c = next;
-        }
-    }
-}
-
-void tree_rm_dirty_leaves(struct heracles *hera, struct tree *tree,
-                                 struct tree *protect) {
-    if (! tree->dirty)
-        return;
-
-    struct tree *c = tree->children;
-    while (c != NULL) {
-        struct tree *next = c->next;
-        tree_rm_dirty_leaves(hera, c, protect);
-        c = next;
-    }
-
-    if (tree != protect && tree->children == NULL)
-        tree_unlink(tree);
-}
-
 struct tree *tree_set(struct pathx *p, const char *value) {
     struct tree *tree;
     int r;
@@ -473,59 +438,6 @@ int tree_replace(struct heracles *hera, const char *path, struct tree *sub) {
  error:
     free_pathx(p);
     return -1;
-}
-
-int tree_save(struct heracles *hera, struct tree *tree,
-                     const char *path) {
-    int result = 0;
-    struct tree *meta = tree_child_cr(hera->origin, s_heracles);
-    struct tree *load = tree_child_cr(meta, s_load);
-
-    // FIXME: We need to detect subtrees that aren't saved by anything
-
-    if (load == NULL)
-        return -1;
-
-    list_for_each(t, tree) {
-        if (t->dirty) {
-            char *tpath = NULL;
-            struct tree *transform = NULL;
-            if (asprintf(&tpath, "%s/%s", path, t->label) == -1) {
-                result = -1;
-                continue;
-            }
-            list_for_each(xfm, load->children) {
-                if (transform_applies(xfm, tpath)) {
-                    if (transform == NULL || transform == xfm) {
-                        transform = xfm;
-                    } else {
-                        const char *filename =
-                            tpath + strlen(HERACLES_FILES_TREE) + 1;
-                        transform_file_error(hera, "mxfm_save", filename,
-                           "Lenses %s and %s could be used to save this file",
-                                             xfm_lens_name(transform),
-                                             xfm_lens_name(xfm));
-                        ERR_REPORT(hera, HERA_EMXFM,
-                                   "Path %s transformable by lens %s and %s",
-                                   tpath,
-                                   xfm_lens_name(transform),
-                                   xfm_lens_name(xfm));
-                        result = -1;
-                    }
-                }
-            }
-            if (transform != NULL) {
-                int r = transform_save(hera, transform, tpath, t);
-                if (r == -1)
-                    result = -1;
-            } else {
-                if (tree_save(hera, t->children, tpath) == -1)
-                    result = -1;
-            }
-            free(tpath);
-        }
-    }
-    return result;
 }
 
 int tree_equal(const struct tree *t1, const struct tree *t2) {

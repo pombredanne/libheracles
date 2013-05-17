@@ -7,8 +7,7 @@ AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 
 
 dnl Version info in libtool's notation
-AC_SUBST([LIBHERACLES_VERSION_INFO], [16:0:16])
-AC_SUBST([LIBFA_VERSION_INFO], [5:0:4])
+AC_SUBST([LIBHERACLES_VERSION_INFO], [1:0:0])
 
 AC_GNU_SOURCE
 
