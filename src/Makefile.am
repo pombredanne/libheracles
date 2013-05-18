@@ -23,7 +23,7 @@ libheracles_la_SOURCES = heracles.h heracles.c pathx.c\
 	transform.h transform.c ast.c get.c put.c list.h \
     info.c info.h errcode.c errcode.h jmt.h jmt.c \
 	fa.c fa.h hash.c hash.h \
-    tree.c tree.h
+    tree.c tree.h labels.h
 
 libheracles_la_LDFLAGS = $(HERACLES_VERSION_SCRIPT) \
     -version-info $(LIBHERACLES_VERSION_INFO)

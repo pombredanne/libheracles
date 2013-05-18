@@ -1,4 +1,4 @@
-SUBDIRS=gnulib/lib src 
+SUBDIRS=gnulib/lib gnulib/tests src 
 
 ACLOCAL_AMFLAGS = -I gnulib/m4
 
@@ -9,7 +9,7 @@ dist_lens_DATA=$(wildcard lenses/*.hera)
 dist_lenstest_DATA=$(wildcard lenses/tests/*.hera)
 
 
-EXTRA_DIST=build/aux/move-if-change Makefile.am HACKING
+EXTRA_DIST=build/aux/move-if-change Makefile.am 
 
 distclean-local:
 	-find $(top_builddir)/build/* -maxdepth 0 -not -name aux | xargs rm -rf

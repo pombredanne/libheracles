@@ -1,4 +1,4 @@
-AC_INIT(rheracles, 1.0.0)
+AC_INIT(libheracles, 1.0.0)
 AC_CONFIG_SRCDIR([src/heracles.c])
 AC_CONFIG_AUX_DIR([build/aux])
 AM_CONFIG_HEADER([config.h])
