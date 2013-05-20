@@ -26,6 +26,6 @@ To build the project you have to run *./configure* and *make* and *make install*
 as root user. More information in the INSTALL document.
 
 If you are building from the repository you have to run *./autogen.sh* first and
-then *make* and *make install*. It requires to have autoconf, automake, autolib and
+then *make* and *make install*. It requires to have autoconf, automake, libtool and
 git installed.
 
