@@ -20,8 +20,9 @@ lens modules and provides two functions that get and put.
 * *hera_put* put parses a tree and returns a char pointer built from values.
 * *hera_close* function frees the loaded modules and other core stuff.
 
+
 Lenses
-______
+------
 It comes with all the lens files of the augeas project but they are installed
 in another directory so they don't collide.
 
