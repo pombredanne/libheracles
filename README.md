@@ -8,6 +8,12 @@ It is built with the idea in mind to make a python augeas lens parser files
 that is implemented in the [heracles project](https://github.com/llou/heracles),
 all tests are built in it and the best way to know how it works is in it's code.
 
+Status
+------
+libheracles is now in **alpha**, so you can play with it but it's use in production
+is completely discouraged.
+
+
 How it works
 ------------
 The library is mainly focused to be the foundations of an implementation
