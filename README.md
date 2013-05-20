@@ -5,8 +5,8 @@ A lens parser C library. Forked from [Augeas](http://augeas.net) to allow
 direct access to the parser functions.
 
 It is built with the idea in mind to make a python augeas lens parser files
-that is implemented in the heracles project, all tests are built in it 
-and the best way to know how it works is in it's code.
+that is implemented in the [heracles project](https://github.com/llou/heracles),
+all tests are built in it and the best way to know how it works is in it's code.
 
 How it works
 ------------
