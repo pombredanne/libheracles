@@ -14,7 +14,7 @@ The library is mainly focused to be the foundations of an implementation
 in another language so it only provides basic functios, the rest is left
 to the user to implement it.
 
-* *hera_init* inits a simplified version of the augeas kernel that mainly loads 
+* *hera_init* inits a simplified version of the augeas core that mainly loads 
 lens modules and provides two functions that get and put. 
 * *hera_get* parses a string in form of char pointer and returns a tree.
 * *hera_put* put parses a tree and returns a char pointer built from values
