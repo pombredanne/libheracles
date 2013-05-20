@@ -22,7 +22,6 @@ lens modules and provides two functions that get and put.
 
 Lenses
 ______
-
 It comes with all the lens files of the augeas project but they are installed
 in another directory so they don't collide.
 

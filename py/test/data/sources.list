@@ -1,4 +1,0 @@
-# deb http://ftp.es.debian.org/debian/ squeeze main
-
-deb http://ftp.es.debian.org/debian/ squeeze main contrib non-free
-deb-src http://ftp.es.debian.org/debian/ squeeze main contrib non-free
