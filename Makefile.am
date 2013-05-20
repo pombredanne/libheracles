@@ -5,8 +5,8 @@ ACLOCAL_AMFLAGS = -I gnulib/m4
 lensdir=$(datadir)/heracles/lenses/dist
 lenstestdir=$(datadir)/heracles/lenses/dist/tests
 
-dist_lens_DATA=$(wildcard lenses/*.hera)
-dist_lenstest_DATA=$(wildcard lenses/tests/*.hera)
+dist_lens_DATA=$(wildcard lenses/*.aug)
+dist_lenstest_DATA=$(wildcard lenses/tests/*.aug)
 
 
 EXTRA_DIST=build/aux/move-if-change Makefile.am 

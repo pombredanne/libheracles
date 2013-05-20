@@ -80,7 +80,7 @@ class Lens(object):
             raise Exception(err.contents.message)
 
     def get(self, text):
-        hera_get = libheracles.hera_get
+        hera_get = libheracles._hera_get
         hera_get.restype = c.POINTER(struct_tree)
         error = c.POINTER(struct_lns_error)()
         tree_p = hera_get(self.lens, c.c_char_p(text), error)
@@ -89,7 +89,7 @@ class Lens(object):
 
     def put(self, tree, text):
         tree = tree[0].pointer
-        hera_put = libheracles.hera_put
+        hera_put = libheracles._hera_put
         hera_put.restype = c.c_char_p
         error = c.POINTER(struct_lns_error)()
         result = hera_put(self.lens, tree, c.c_char_p(text), error)

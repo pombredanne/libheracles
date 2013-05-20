@@ -115,7 +115,7 @@ static int init_loadpath(struct heracles *hera, const char *loadpath) {
         if (r != 0)
             return -1;
     }
-    /*
+
     if (!(hera->flags & HERA_NO_STDINC)) {
         r = argz_add(&hera->modpathz, &hera->nmodpath, HERACLES_LENS_DIR);
         if (r != 0)
@@ -125,7 +125,7 @@ static int init_loadpath(struct heracles *hera, const char *loadpath) {
         if (r != 0)
             return -1;
     }
-    */
+
     /* Clean up trailing slashes */
     if (hera->nmodpath > 0) {
         argz_stringify(hera->modpathz, hera->nmodpath, PATH_SEP_CHAR);
